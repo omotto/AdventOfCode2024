@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -62,20 +63,17 @@ func isSafeReportTolerance(report []int) bool {
 			continue
 		}
 		// If there is a wrong level check current one and adjacent
-		newReport := make([]int, len(report))
-		copy(newReport, report)
+		newReport := slices.Clone(report)
 		newReport = append(newReport[:idx], newReport[idx+1:]...)
 		if isSafeReport(newReport) {
 			return true
 		} else {
-			newReport = make([]int, len(report))
-			copy(newReport, report)
+			newReport = slices.Clone(report)
 			newReport = append(newReport[:idx-1], newReport[idx:]...)
 			if isSafeReport(newReport) {
 				return true
 			} else {
-				newReport = make([]int, len(report))
-				copy(newReport, report)
+				newReport = slices.Clone(report)
 				if idx < len(report)-2 {
 					newReport = append(newReport[:idx+1], newReport[idx+2:]...)
 				} else {
