@@ -72,16 +72,6 @@ func isSafeReportTolerance(report []int) bool {
 			newReport = append(newReport[:idx-1], newReport[idx:]...)
 			if isSafeReport(newReport) {
 				return true
-			} else {
-				newReport = slices.Clone(report)
-				if idx < len(report)-2 {
-					newReport = append(newReport[:idx+1], newReport[idx+2:]...)
-				} else {
-					newReport = newReport[:len(newReport)-1]
-				}
-				if isSafeReport(newReport) {
-					return true
-				}
 			}
 		}
 		return false
