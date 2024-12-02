@@ -17,12 +17,12 @@ go run ./src/dayXX/main.go
 - Run day XX test:
 
 ```
-got test ./src/dayXXX/
+go test ./src/dayXXX/
 ``` 
 
 - Run all tests:
 
 ```
-got test ./...
+go test ./...
 ``` 
 
