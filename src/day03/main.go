@@ -88,6 +88,6 @@ func main() {
 	absPathName, _ := filepath.Abs("src/day03/input.txt")
 	output, _ := file.ReadInput(absPathName)
 
-	fmt.Println(getSumMults(output))  // 178538786
-	fmt.Println(getSumMults2(output)) //  102467299
+	fmt.Println(getSumMults(output))
+	fmt.Println(getSumMults2(output))
 }
