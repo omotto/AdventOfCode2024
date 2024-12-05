@@ -1,10 +1,10 @@
 package main
 
 import (
-	"advent2024/pkg/file"
 	"fmt"
-	
 	"path/filepath"
+
+	"advent2024/pkg/file"
 )
 
 const (
