@@ -7,6 +7,9 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
+
+	"golang.org/x/sync/errgroup"
 
 	"advent2024/pkg/file"
 )
@@ -65,7 +68,7 @@ func validate(result int, values []int, numOps, currentDepth int, combination []
 	return false
 }
 
-func getValidRows(s []string, part int) int {
+func getValidRows1(s []string) int {
 	result := 0
 	for _, line := range s {
 		p1 := strings.Split(line, ": ")
@@ -75,24 +78,51 @@ func getValidRows(s []string, part int) int {
 		for idx, value := range p2 {
 			values[idx], _ = strconv.Atoi(value)
 		}
-		if part == 1 {
-			if isValid(key, values) {
-				result += key
-			}
-		} else {
-			numOps := 3 // SUM, MULT, CONC
-			if validate(key, values, numOps, 1, []int{}) {
-				result += key
-			}
+		if isValid(key, values) {
+			result += key
 		}
 	}
 	return result
 }
 
+func getValidRows2(s []string) int {
+	var (
+		mu     sync.Mutex
+		result = 0
+		eg     = errgroup.Group{}
+		//wg sync.WaitGroup
+	)
+	eg.SetLimit(100)
+	//wg.Add(len(s))
+	for _, line := range s {
+		p1 := strings.Split(line, ": ")
+		key, _ := strconv.Atoi(p1[0])
+		p2 := strings.Split(p1[1], " ")
+		values := make([]int, len(p2))
+		for idx, value := range p2 {
+			values[idx], _ = strconv.Atoi(value)
+		}
+		eg.Go(func() error {
+			//go func() {
+			numOps := 3 // SUM, MULT, CONC
+			if validate(key, values, numOps, 1, []int{}) {
+				mu.Lock()
+				result += key
+				mu.Unlock()
+			}
+			//defer wg.Done()
+			return nil
+		})
+		//}()
+	}
+	_ = eg.Wait()
+	//wg.Wait()
+	return result
+}
 func main() {
 	absPathName, _ := filepath.Abs("src/day07/input.txt")
 	output, _ := file.ReadInput(absPathName)
 
-	fmt.Println(getValidRows(output, 1))
-	fmt.Println(getValidRows(output, 2))
+	fmt.Println(getValidRows1(output))
+	fmt.Println(getValidRows2(output))
 }

@@ -30,7 +30,7 @@ func TestGetValidRows1(t *testing.T) {
 	}
 	for _, tc := range tcs {
 		t.Run(tc.desc, func(t *testing.T) {
-			got := getValidRows(tc.input, 1)
+			got := getValidRows1(tc.input)
 			if diff := cmp.Diff(tc.result, got); diff != "" {
 				t.Errorf("sum has diff %s", diff)
 			}
@@ -62,7 +62,7 @@ func TestGetValidRows2(t *testing.T) {
 	}
 	for _, tc := range tcs {
 		t.Run(tc.desc, func(t *testing.T) {
-			got := getValidRows(tc.input, 2)
+			got := getValidRows2(tc.input)
 			if diff := cmp.Diff(tc.result, got); diff != "" {
 				t.Errorf("sum has diff %s", diff)
 			}
