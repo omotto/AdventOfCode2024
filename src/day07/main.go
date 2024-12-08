@@ -118,6 +118,7 @@ func getValidRows2(s []string) int {
 	_ = eg.Wait()
 	//wg.Wait()
 	return result
+
 }
 func main() {
 	absPathName, _ := filepath.Abs("src/day07/input.txt")
