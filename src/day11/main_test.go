@@ -49,3 +49,25 @@ func TestGetNumStones2(t *testing.T) {
 		})
 	}
 }
+
+func TestGetNumStones3(t *testing.T) {
+	tcs := []struct {
+		desc   string
+		input  string
+		result int
+	}{
+		{
+			desc:   "In this example, after blinking six times, you would have 22 stones. After blinking 25 times, you would have 55312 stones!",
+			input:  "125 17",
+			result: 55312,
+		},
+	}
+	for _, tc := range tcs {
+		t.Run(tc.desc, func(t *testing.T) {
+			got := getNumStones3([]string{tc.input}, 25)
+			if diff := cmp.Diff(tc.result, got); diff != "" {
+				t.Errorf("sum has diff %s", diff)
+			}
+		})
+	}
+}
