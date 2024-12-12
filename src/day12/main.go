@@ -34,7 +34,6 @@ func getRegion(s []string, x, y int, checked map[string]struct{}, region *Region
 			getRegion(s, x+1, y, checked, region)
 		}
 		region.perimeter--
-
 	}
 	if y > 0 && s[y-1][x] == s[y][x] {
 		if _, ok := checked[fmt.Sprintf(key, x, y-1)]; !ok {
@@ -68,15 +67,6 @@ func calculateRegions(s []string) []Region {
 		}
 	}
 	return regions
-}
-
-func getPrices(s []string) int {
-	regions := calculateRegions(s)
-	result := 0
-	for _, region := range regions {
-		result += region.area * region.perimeter
-	}
-	return result
 }
 
 func getSides(region map[string]struct{}) int {
@@ -121,11 +111,52 @@ func getSides(region map[string]struct{}) int {
 	return sides
 }
 
+// getArea Not used because is calculated directly in getRegion
+func getArea(region map[string]struct{}) int {
+	return len(region)
+}
+
+// getPerimeter Not used because is calculated directly in getRegion
+func getPerimeter(region map[string]struct{}) int {
+	totalPerimeter := 0
+	for k, _ := range region {
+		parts := strings.Split(k, ":")
+		x, _ := strconv.Atoi(parts[0])
+		y, _ := strconv.Atoi(parts[1])
+		perimeter := 4 // 4 sides for each single "pixel"
+		if _, left := region[fmt.Sprintf(key, x-1, y)]; left {
+			perimeter--
+		}
+		if _, right := region[fmt.Sprintf(key, x+1, y)]; right {
+			perimeter--
+		}
+		if _, up := region[fmt.Sprintf(key, x, y-1)]; up {
+			perimeter--
+		}
+		if _, down := region[fmt.Sprintf(key, x, y+1)]; down {
+			perimeter--
+		}
+		totalPerimeter += perimeter
+	}
+	return totalPerimeter
+}
+
+func getPrices(s []string) int {
+	regions := calculateRegions(s)
+	result := 0
+	for _, region := range regions {
+		result += region.area * region.perimeter
+		//result += getArea(region.positions) * getPerimeter(region.positions)
+	}
+	return result
+}
+
 func getPrices2(s []string) int {
 	regions := calculateRegions(s)
 	result := 0
 	for _, region := range regions {
 		result += region.area * getSides(region.positions)
+		//result += getArea(region.positions) * getSides(region.positions)
 	}
 	return result
 }
