@@ -101,7 +101,6 @@ func getNumStones3(s []string, times int) int {
 	strStones := strings.Split(s[0], " ")
 	stones := make([]int, len(strStones))
 	ch := make(chan int, len(stones))
-
 	for i, strStone := range strStones {
 		wg.Add(1)
 		stones[i], _ = strconv.Atoi(strStone)
@@ -125,6 +124,5 @@ func main() {
 
 	fmt.Println(getNumStones(output, 25))
 	fmt.Println(getNumStones2(output, 75))
-
 	fmt.Println(getNumStones3(output, 75))
 }
