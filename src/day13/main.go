@@ -1,57 +1,52 @@
 package main
 
 import (
+	"advent2024/pkg/file"
 	"fmt"
 	"math"
 	"path/filepath"
-	"strconv"
-	"strings"
-
-	"advent2024/pkg/file"
 )
 
-const MAX_INT = 9223372036854775807
+const maxInteger = 9223372036854775807
 
-type Game struct {
-	buttonA [2]int
-	buttonB [2]int
-	price   [2]int
+type coord struct {
+	x, y int
 }
 
-func parseLine(s string, idx int) (x int, y int) {
-	partsA := strings.Split(s[idx:], ", ")
-	x, _ = strconv.Atoi(partsA[0][2:])
-	y, _ = strconv.Atoi(partsA[1][2:])
-	return x, y
+type Game struct {
+	buttonA coord
+	buttonB coord
+	price   coord
 }
 
 func parseInput(s []string) []Game {
+	var aX, aY, bX, bY, pX, pY int
 	games := make([]Game, (len(s)+1)/4)
 	for idx := 0; idx < len(s); idx += 4 {
-		aX, aY := parseLine(s[idx], 10)
-		bX, bY := parseLine(s[idx+1], 10)
-		pX, pY := parseLine(s[idx+2], 7)
+		_, _ = fmt.Sscanf(s[idx+0], "Button A: X+%d, Y+%d", &aX, &aY)
+		_, _ = fmt.Sscanf(s[idx+1], "Button B: X+%d, Y+%d", &bX, &bY)
+		_, _ = fmt.Sscanf(s[idx+2], "Prize: X=%d, Y=%d", &pX, &pY)
 		games[idx/4] = Game{
-			buttonA: [2]int{aX, aY},
-			buttonB: [2]int{bX, bY},
-			price:   [2]int{pX, pY},
+			buttonA: coord{x: aX, y: aY},
+			buttonB: coord{x: bX, y: bY},
+			price:   coord{x: pX, y: pY},
 		}
 	}
 	return games
 }
 
 func getPrice(game Game) int {
-	minimum := MAX_INT
+	minimum := maxInteger
 	for a := 0; a < 100; a++ {
 		for b := 0; b < 100; b++ {
-			x := game.buttonA[0]*a + game.buttonB[0]*b
-			y := game.buttonA[1]*a + game.buttonB[1]*b
-			if x == game.price[0] && y == game.price[1] && (a*3+b) < minimum {
+			x := game.buttonA.x*a + game.buttonB.x*b
+			y := game.buttonA.y*a + game.buttonB.y*b
+			if x == game.price.x && y == game.price.y && (a*3+b) < minimum {
 				minimum = a*3 + b
 			}
 		}
 	}
-	if minimum != MAX_INT {
+	if minimum != maxInteger {
 		return minimum
 	}
 	return 0
@@ -72,12 +67,12 @@ func getPriceByEquation(game Game, delta int) int {
 		a * aX + b * bX = pX
 		a * aY + b * bY = pY
 	*/
-	pX := game.price[0] + delta
-	pY := game.price[1] + delta
-	aX := game.buttonA[0]
-	aY := game.buttonA[1]
-	bX := game.buttonB[0]
-	bY := game.buttonB[1]
+	pX := game.price.x + delta
+	pY := game.price.y + delta
+	aX := game.buttonA.x
+	aY := game.buttonA.y
+	bX := game.buttonB.x
+	bY := game.buttonB.y
 
 	a := float64(pX*bY-pY*bX) / float64(aX*bY-aY*bX)
 	b := float64(pY*aX-pX*aY) / float64(aX*bY-aY*bX)
