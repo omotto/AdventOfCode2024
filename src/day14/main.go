@@ -98,10 +98,75 @@ func countSeconds(s []string, maxX, maxY int) int {
 	return seconds
 }
 
+func countSeconds2(s []string, maxX, maxY int) int {
+	robots := make([]Robot, len(s))
+	for idx, line := range s {
+		_, _ = fmt.Sscanf(line, "p=%d,%d v=%d,%d", &robots[idx].pX, &robots[idx].pY, &robots[idx].vX, &robots[idx].vY)
+	}
+	seconds := 0
+	maxWeight := 0
+	for i := 0; i < maxX*maxY; i++ { // sequence is repeated every
+		// Move
+		for idx, robot := range robots {
+			newPx := robot.pX + robot.vX
+			newPy := robot.pY + robot.vY
+			newPx = newPx % maxX
+			if newPx < 0 {
+				newPx = maxX + newPx
+			}
+			newPy = newPy % maxY
+			if newPy < 0 {
+				newPy = maxY + newPy
+			}
+			robots[idx].pX = newPx
+			robots[idx].pY = newPy
+		}
+		// Check
+		points := map[string]struct{}{}
+		for _, robot := range robots {
+			points[fmt.Sprintf("%d:%d", robot.pX, robot.pY)] = struct{}{}
+		}
+		weight := 0
+		for _, robot := range robots {
+			if _, ok := points[fmt.Sprintf("%d:%d", robot.pX+1, robot.pY)]; ok {
+				weight++
+			}
+			if _, ok := points[fmt.Sprintf("%d:%d", robot.pX-1, robot.pY)]; ok {
+				weight++
+			}
+			if _, ok := points[fmt.Sprintf("%d:%d", robot.pX, robot.pY+1)]; ok {
+				weight++
+			}
+			if _, ok := points[fmt.Sprintf("%d:%d", robot.pX, robot.pY-1)]; ok {
+				weight++
+			}
+			if _, ok := points[fmt.Sprintf("%d:%d", robot.pX-1, robot.pY-1)]; ok {
+				weight++
+			}
+			if _, ok := points[fmt.Sprintf("%d:%d", robot.pX+1, robot.pY+1)]; ok {
+				weight++
+			}
+			if _, ok := points[fmt.Sprintf("%d:%d", robot.pX+1, robot.pY-1)]; ok {
+				weight++
+			}
+			if _, ok := points[fmt.Sprintf("%d:%d", robot.pX-1, robot.pY+1)]; ok {
+				weight++
+			}
+		}
+		if weight > maxWeight {
+			maxWeight = weight
+			seconds = i + 1
+			printRobots(points, maxX, maxY)
+		}
+	}
+	return seconds
+}
+
 func main() {
 	absPathName, _ := filepath.Abs("src/day14/input.txt")
 	output, _ := file.ReadInput(absPathName)
 
 	fmt.Println(countRobots(output, 101, 103, 100))
-	fmt.Println(countSeconds(output, 101, 103))
+	//fmt.Println(countSeconds(output, 101, 103))
+	fmt.Println(countSeconds2(output, 101, 103))
 }
