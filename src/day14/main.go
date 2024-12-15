@@ -85,12 +85,17 @@ func countSeconds(s []string, maxX, maxY int) int {
 		}
 		seconds++
 		// Check
+		overlapped := false
 		points := map[string]struct{}{}
 		for _, robot := range robots {
+			if _, ok := points[fmt.Sprintf("%d:%d", robot.pX, robot.pY)]; ok {
+				overlapped = true
+				break
+			}
 			points[fmt.Sprintf("%d:%d", robot.pX, robot.pY)] = struct{}{}
 		}
 		// NO robots overlapping
-		if len(points) == len(robots) {
+		if !overlapped {
 			printRobots(points, maxX, maxY)
 			break
 		}
@@ -105,6 +110,7 @@ func countSeconds2(s []string, maxX, maxY int) int {
 	}
 	seconds := 0
 	maxWeight := 0
+	frame := map[string]struct{}{}
 	for i := 0; i < maxX*maxY; i++ { // sequence is repeated every
 		// Move
 		for idx, robot := range robots {
@@ -156,9 +162,10 @@ func countSeconds2(s []string, maxX, maxY int) int {
 		if weight > maxWeight {
 			maxWeight = weight
 			seconds = i + 1
-			printRobots(points, maxX, maxY)
+			frame = points
 		}
 	}
+	printRobots(frame, maxX, maxY)
 	return seconds
 }
 
@@ -167,6 +174,6 @@ func main() {
 	output, _ := file.ReadInput(absPathName)
 
 	fmt.Println(countRobots(output, 101, 103, 100))
-	//fmt.Println(countSeconds(output, 101, 103))
+	fmt.Println(countSeconds(output, 101, 103))
 	fmt.Println(countSeconds2(output, 101, 103))
 }
