@@ -1,10 +1,11 @@
 package main
 
 import (
-	"advent2024/pkg/file"
 	"fmt"
 	"path/filepath"
 	"slices"
+
+	"advent2024/pkg/file"
 )
 
 const (
@@ -32,38 +33,14 @@ func getMinScoreMaze(room []string, sx, sy int) map[string]int {
 	type Tile struct {
 		x, y, dir, score int
 	}
-	visited := map[string]int{
-		fmt.Sprintf("%d:%d:%d", sx, sy, RIGHT): 0,
-		/*		fmt.Sprintf("%d:%d:%d", sx, sy, UP):    0,
-				fmt.Sprintf("%d:%d:%d", sx, sy, DOWN):  0,
-				fmt.Sprintf("%d:%d:%d", sx, sy, LEFT):  0,*/
-	}
+	visited := map[string]int{fmt.Sprintf("%d:%d:%d", sx, sy, RIGHT): 0}
 	queue := make([]Tile, 0)
-	queue = append(queue, []Tile{
-		{
-			x:     sx,
-			y:     sy,
-			dir:   RIGHT,
-			score: 0,
-		}, /*, {
-			x:     sx,
-			y:     sy,
-			dir:   LEFT,
-			score: 0,
-		},
-		{
-			x:     sx,
-			y:     sy,
-			dir:   UP,
-			score: 0,
-		},
-		{
-			x:     sx,
-			y:     sy,
-			dir:   DOWN,
-			score: 0,
-		},*/
-	}...)
+	queue = append(queue, Tile{
+		x:     sx,
+		y:     sy,
+		dir:   RIGHT,
+		score: 0,
+	})
 	for len(queue) > 0 {
 		tile := queue[0]  // Get first
 		queue = queue[1:] // Remove it
