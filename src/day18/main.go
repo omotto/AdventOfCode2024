@@ -3,88 +3,76 @@ package main
 import (
 	"fmt"
 	"path/filepath"
-	"slices"
 
 	"advent2024/pkg/file"
 )
 
 const (
-	CoordKey    = "%d:%d"
-	CoordDirKey = "%d:%d:%d"
-
-	UP    = 1
-	DOWN  = 2
-	RIGHT = 3
-	LEFT  = 4
+	CoordKey = "%d:%d"
 )
 
-func getMinScoreMaze(room map[string]struct{}, sx, sy, ex, ey int) map[string]int {
+func getMinScoreMaze(room map[string]struct{}, sx, sy, ex, ey int) int {
 	type Tile struct {
-		x, y, dir, score int
+		x, y, score int
 	}
 	visited := map[string]int{
-		fmt.Sprintf("%d:%d:%d", sx, sy, RIGHT): 0,
+		fmt.Sprintf(CoordKey, sx, sy): 0,
 	}
 	queue := make([]Tile, 0)
 	queue = append(queue, Tile{
 		x:     sx,
 		y:     sy,
-		dir:   RIGHT,
 		score: 0,
 	})
 	for len(queue) > 0 {
 		tile := queue[0]  // Get first
 		queue = queue[1:] // Remove it
-		if v, ok := visited[fmt.Sprintf(CoordDirKey, tile.x, tile.y, tile.dir)]; ok && v < tile.score {
-			continue
+		if tile.x == ex && tile.y == ey {
+			return tile.score
 		}
 		newScore := tile.score + 1
 		if _, ok := room[fmt.Sprintf(CoordKey, tile.x-1, tile.y)]; !ok && tile.x > 0 {
-			if v, ok := visited[fmt.Sprintf(CoordDirKey, tile.x-1, tile.y, LEFT)]; (ok && newScore < v) || !ok {
-				visited[fmt.Sprintf(CoordDirKey, tile.x-1, tile.y, LEFT)] = newScore
+			if _, ok := visited[fmt.Sprintf(CoordKey, tile.x-1, tile.y)]; !ok {
+				visited[fmt.Sprintf(CoordKey, tile.x-1, tile.y)] = newScore
 				queue = append(queue, Tile{
 					x:     tile.x - 1,
 					y:     tile.y,
-					dir:   LEFT,
 					score: newScore,
 				})
 			}
 		}
 		if _, ok := room[fmt.Sprintf(CoordKey, tile.x+1, tile.y)]; !ok && tile.x < ex {
-			if v, ok := visited[fmt.Sprintf(CoordDirKey, tile.x+1, tile.y, RIGHT)]; (ok && newScore < v) || !ok {
-				visited[fmt.Sprintf(CoordDirKey, tile.x+1, tile.y, RIGHT)] = newScore
+			if _, ok := visited[fmt.Sprintf(CoordKey, tile.x+1, tile.y)]; !ok {
+				visited[fmt.Sprintf(CoordKey, tile.x+1, tile.y)] = newScore
 				queue = append(queue, Tile{
 					x:     tile.x + 1,
 					y:     tile.y,
-					dir:   RIGHT,
 					score: newScore,
 				})
 			}
 		}
 		if _, ok := room[fmt.Sprintf(CoordKey, tile.x, tile.y-1)]; !ok && tile.y > 0 {
-			if v, ok := visited[fmt.Sprintf(CoordDirKey, tile.x, tile.y-1, UP)]; (ok && newScore < v) || !ok {
-				visited[fmt.Sprintf(CoordDirKey, tile.x, tile.y-1, UP)] = newScore
+			if _, ok := visited[fmt.Sprintf(CoordKey, tile.x, tile.y-1)]; !ok {
+				visited[fmt.Sprintf(CoordKey, tile.x, tile.y-1)] = newScore
 				queue = append(queue, Tile{
 					x:     tile.x,
 					y:     tile.y - 1,
-					dir:   UP,
 					score: newScore,
 				})
 			}
 		}
 		if _, ok := room[fmt.Sprintf(CoordKey, tile.x, tile.y+1)]; !ok && tile.y < ey {
-			if v, ok := visited[fmt.Sprintf(CoordDirKey, tile.x, tile.y+1, DOWN)]; (ok && newScore < v) || !ok {
-				visited[fmt.Sprintf(CoordDirKey, tile.x, tile.y+1, DOWN)] = newScore
+			if _, ok := visited[fmt.Sprintf(CoordKey, tile.x, tile.y+1)]; !ok {
+				visited[fmt.Sprintf(CoordKey, tile.x, tile.y+1)] = newScore
 				queue = append(queue, Tile{
 					x:     tile.x,
 					y:     tile.y + 1,
-					dir:   DOWN,
 					score: newScore,
 				})
 			}
 		}
 	}
-	return visited
+	return -1
 }
 
 func parseInput(s []string, bytes int) map[string]struct{} {
@@ -102,44 +90,15 @@ func parseInput(s []string, bytes int) map[string]struct{} {
 
 func getMinPath(s []string, bytes, ex, ey int) int {
 	room := parseInput(s, bytes)
-	minScores := getMinScoreMaze(room, 0, 0, ex, ey)
-	var scores []int
-	if v, ok := minScores[fmt.Sprintf(CoordDirKey, ex, ey, UP)]; ok {
-		scores = append(scores, v)
-	}
-	if v, ok := minScores[fmt.Sprintf(CoordDirKey, ex, ey, DOWN)]; ok {
-		scores = append(scores, v)
-	}
-	if v, ok := minScores[fmt.Sprintf(CoordDirKey, ex, ey, LEFT)]; ok {
-		scores = append(scores, v)
-	}
-	if v, ok := minScores[fmt.Sprintf(CoordDirKey, ex, ey, RIGHT)]; ok {
-		scores = append(scores, v)
-	} /*
-		for k, v := range minScores {
-			fmt.Printf("%s = %d\r\n", k, v)
-		}*/
-	return slices.Min(scores)
+	score := getMinScoreMaze(room, 0, 0, ex, ey)
+	return score
 }
 
 func getCoord(s []string, bytes, ex, ey int) string {
 	for idx := bytes; idx < len(s); idx++ {
 		room := parseInput(s, idx)
-		minScores := getMinScoreMaze(room, 0, 0, ex, ey)
-		var scores []int
-		if v, ok := minScores[fmt.Sprintf(CoordDirKey, ex, ey, UP)]; ok {
-			scores = append(scores, v)
-		}
-		if v, ok := minScores[fmt.Sprintf(CoordDirKey, ex, ey, DOWN)]; ok {
-			scores = append(scores, v)
-		}
-		if v, ok := minScores[fmt.Sprintf(CoordDirKey, ex, ey, LEFT)]; ok {
-			scores = append(scores, v)
-		}
-		if v, ok := minScores[fmt.Sprintf(CoordDirKey, ex, ey, RIGHT)]; ok {
-			scores = append(scores, v)
-		}
-		if len(scores) == 0 {
+		score := getMinScoreMaze(room, 0, 0, ex, ey)
+		if score == -1 {
 			return s[idx-1]
 		}
 	}
