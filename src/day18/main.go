@@ -15,6 +15,9 @@ func getMinScoreMaze(room map[string]struct{}, sx, sy, ex, ey int) int {
 	type Tile struct {
 		x, y, score int
 	}
+	directions := [4][2]int{
+		{-1, 0}, {+1, 0}, {0, -1}, {0, +1},
+	}
 	visited := map[string]int{
 		fmt.Sprintf(CoordKey, sx, sy): 0,
 	}
@@ -31,44 +34,18 @@ func getMinScoreMaze(room map[string]struct{}, sx, sy, ex, ey int) int {
 			return tile.score
 		}
 		newScore := tile.score + 1
-		if _, ok := room[fmt.Sprintf(CoordKey, tile.x-1, tile.y)]; !ok && tile.x > 0 {
-			if _, ok := visited[fmt.Sprintf(CoordKey, tile.x-1, tile.y)]; !ok {
-				visited[fmt.Sprintf(CoordKey, tile.x-1, tile.y)] = newScore
-				queue = append(queue, Tile{
-					x:     tile.x - 1,
-					y:     tile.y,
-					score: newScore,
-				})
-			}
-		}
-		if _, ok := room[fmt.Sprintf(CoordKey, tile.x+1, tile.y)]; !ok && tile.x < ex {
-			if _, ok := visited[fmt.Sprintf(CoordKey, tile.x+1, tile.y)]; !ok {
-				visited[fmt.Sprintf(CoordKey, tile.x+1, tile.y)] = newScore
-				queue = append(queue, Tile{
-					x:     tile.x + 1,
-					y:     tile.y,
-					score: newScore,
-				})
-			}
-		}
-		if _, ok := room[fmt.Sprintf(CoordKey, tile.x, tile.y-1)]; !ok && tile.y > 0 {
-			if _, ok := visited[fmt.Sprintf(CoordKey, tile.x, tile.y-1)]; !ok {
-				visited[fmt.Sprintf(CoordKey, tile.x, tile.y-1)] = newScore
-				queue = append(queue, Tile{
-					x:     tile.x,
-					y:     tile.y - 1,
-					score: newScore,
-				})
-			}
-		}
-		if _, ok := room[fmt.Sprintf(CoordKey, tile.x, tile.y+1)]; !ok && tile.y < ey {
-			if _, ok := visited[fmt.Sprintf(CoordKey, tile.x, tile.y+1)]; !ok {
-				visited[fmt.Sprintf(CoordKey, tile.x, tile.y+1)] = newScore
-				queue = append(queue, Tile{
-					x:     tile.x,
-					y:     tile.y + 1,
-					score: newScore,
-				})
+		for _, direction := range directions {
+			newX := tile.x + direction[0]
+			newY := tile.y + direction[1]
+			if _, ok := room[fmt.Sprintf(CoordKey, newX, newY)]; !ok && newX >= 0 && newY >= 0 && newX <= ex && newY <= ey {
+				if _, ok := visited[fmt.Sprintf(CoordKey, newX, newY)]; !ok {
+					visited[fmt.Sprintf(CoordKey, newX, newY)] = newScore
+					queue = append(queue, Tile{
+						x:     newX,
+						y:     newY,
+						score: newScore,
+					})
+				}
 			}
 		}
 	}
