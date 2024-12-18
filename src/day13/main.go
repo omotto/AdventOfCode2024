@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"advent2024/pkg/file"
+	mymath "advent2024/pkg/math"
 )
 
 const maxInteger = 9223372036854775807
@@ -75,8 +76,7 @@ func getPriceByEquation(game Game, delta int) int {
 	bX := game.buttonB.x
 	bY := game.buttonB.y
 
-	a := float64(pX*bY-pY*bX) / float64(aX*bY-aY*bX)
-	b := float64(pY*aX-pX*aY) / float64(aX*bY-aY*bX)
+	a, b := mymath.SystemLinearEq2x2([2][3]int{{aX, bX, pX}, {aY, bY, pY}})
 
 	// if there is no decimals is valid
 	if a == math.Trunc(a) && b == math.Trunc(b) {
