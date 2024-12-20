@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"advent2024/pkg/file"
+	"advent2024/pkg/screen"
 )
 
 func countRobots(s []string, maxX, maxY, times int) int {
@@ -47,6 +48,8 @@ type Robot struct {
 }
 
 func printRobots(points map[string]struct{}, maxX, maxY int) {
+	screen.Clear()
+	screen.MoveTopLeft()
 	for y := 0; y < maxY; y++ {
 		var buffer bytes.Buffer
 		for x := 0; x < maxX; x++ {

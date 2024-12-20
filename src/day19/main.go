@@ -1,12 +1,14 @@
 package main
 
 import (
-	"advent2024/pkg/file"
 	"fmt"
-	"golang.org/x/sync/errgroup"
 	"path/filepath"
 	"strings"
 	"sync/atomic"
+
+	"golang.org/x/sync/errgroup"
+
+	"advent2024/pkg/file"
 )
 
 func parseInput(s []string) ([]string, []string) {
