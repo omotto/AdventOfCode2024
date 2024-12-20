@@ -109,13 +109,15 @@ func getDistance(sx, sy, ex, ey int) int {
 	return int(math.Abs(float64(sx-ex)) + math.Abs(float64(sy-ey)))
 }
 
-func getCheatsEndCoordinates(scoreMap map[coords]int, sx, sy int) []coords {
-	var newDestinations []coords
-	for dx := -20; dx < 21; dx++ { // From LEFT to RIGHT
-		dxMax := 20 - int(math.Abs(float64(dx)))
-		for dy := -dxMax; dy < dxMax+1; dy++ { // From UP to Down
-			if _, ok := scoreMap[coords{sx + dx, sy + dy}]; ok {
-				newDestinations = append(newDestinations, coords{sx + dx, sy + dy})
+func getCheats2(scoreMap map[coords]int) [][2]coords {
+	var newDestinations [][2]coords
+	for sxy, _ := range scoreMap {
+		for dx := -20; dx < 21; dx++ { // From LEFT to RIGHT
+			dxMax := 20 - int(math.Abs(float64(dx)))
+			for dy := -dxMax; dy < dxMax+1; dy++ { // From UP to Down
+				if _, ok := scoreMap[coords{sxy.x + dx, sxy.y + dy}]; ok {
+					newDestinations = append(newDestinations, [2]coords{{sxy.x, sxy.y}, {sxy.x + dx, sxy.y + dy}})
+				}
 			}
 		}
 	}
@@ -125,13 +127,11 @@ func getCheatsEndCoordinates(scoreMap map[coords]int, sx, sy int) []coords {
 func getNumCheats2(s []string, edge int) int {
 	sx, sy, ex, ey := parseInput(s)
 	scoreMap := getScoreMaze(s, sx, sy, ex, ey)
+	cheats := getCheats2(scoreMap)
 	result := 0
-	for xy, val := range scoreMap {
-		newDestinations := getCheatsEndCoordinates(scoreMap, xy.x, xy.y)
-		for _, dest := range newDestinations {
-			if scoreMap[dest]-val-getDistance(xy.x, xy.y, dest.x, dest.y) >= edge {
-				result++
-			}
+	for _, cheat := range cheats {
+		if scoreMap[coords{cheat[1].x, cheat[1].y}]-scoreMap[coords{cheat[0].x, cheat[0].y}]-getDistance(cheat[0].x, cheat[0].y, cheat[1].x, cheat[1].y) >= edge {
+			result++
 		}
 	}
 	return result
