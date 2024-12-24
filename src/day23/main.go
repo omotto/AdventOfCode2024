@@ -1,12 +1,13 @@
 package main
 
 import (
-	"advent2024/pkg/file"
 	"fmt"
 	"path/filepath"
 	"slices"
 	"sort"
 	"strings"
+
+	"advent2024/pkg/file"
 )
 
 func getConnections(s []string) map[string][]string {

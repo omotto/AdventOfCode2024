@@ -6,7 +6,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestGetNumCheats(t *testing.T) {
+func TestGetSumComplexities(t *testing.T) {
 	tcs := []struct {
 		desc   string
 		input  []string
