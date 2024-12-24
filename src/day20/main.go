@@ -1,10 +1,11 @@
 package main
 
 import (
-	"advent2024/pkg/file"
 	"fmt"
 	"math"
 	"path/filepath"
+
+	"advent2024/pkg/file"
 )
 
 type coords struct {

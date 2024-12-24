@@ -1,11 +1,12 @@
 package main
 
 import (
-	"advent2024/pkg/file"
 	"fmt"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"advent2024/pkg/file"
 )
 
 func mix(a, b int) int {
