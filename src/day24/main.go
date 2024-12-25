@@ -91,6 +91,15 @@ func getSwappedBits(s []string) string {
 		nextCarry,
 		nextRes string
 	)
+	/*
+		Half-Adder formula for bit 0:
+		- x XOR y = res1 = z
+		- x AND y = int1 = nextCarry
+		Full-Adder formula per each bit > 0:
+		- (x XOR y = res1) XOR carry = Z
+		- res1 AND carry = int2
+		- (x AND y = int1) OR int2 = nextCarry
+	*/
 	for bitCount := 0; bitCount < 45; bitCount++ {
 		res1 := getOperation(fmt.Sprintf("x%02d", bitCount), fmt.Sprintf("y%02d", bitCount), "XOR", s)
 		int1 := getOperation(fmt.Sprintf("x%02d", bitCount), fmt.Sprintf("y%02d", bitCount), "AND", s)
