@@ -1,7 +1,6 @@
 package main
 
 import (
-	"advent2024/pkg/file"
 	"bytes"
 	"fmt"
 	"path/filepath"
@@ -9,6 +8,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"advent2024/pkg/file"
 )
 
 func execute(keyValues map[string]int, operand1, operand2, operation string) int {
